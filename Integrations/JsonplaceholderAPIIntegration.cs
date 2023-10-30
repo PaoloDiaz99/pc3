@@ -34,5 +34,77 @@ namespace pc3.Integrations
             }
             return listado;
         }
+
+        public async Task<TodoDTO> GetTodoById(int id)
+        {
+            string requestUrl = $"{API_URL}/{id}";
+            TodoDTO todo = null;
+            try
+            {
+                HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    todo = await response.Content.ReadFromJsonAsync<TodoDTO>();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error al llamar a la API: {ex.Message}");
+            }
+            return todo;
+        }
+
+        public async Task CreateTodo(TodoDTO todo)
+        {
+            string requestUrl = $"{API_URL}";
+            try
+            {
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync(requestUrl, todo);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Error al crear el elemento: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error al llamar a la API: {ex.Message}");
+            }
+        }
+
+        public async Task UpdateTodo(TodoDTO todo)
+        {
+            string requestUrl = $"{API_URL}/{todo.id}";
+            try
+            {
+                HttpResponseMessage response = await httpClient.PutAsJsonAsync(requestUrl, todo);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Error al actualizar el elemento: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error al llamar a la API: {ex.Message}");
+            }
+        }
+
+        public async Task DeleteTodo(int id)
+        {
+            string requestUrl = $"{API_URL}/{id}";
+            try
+            {
+                HttpResponseMessage response = await httpClient.DeleteAsync(requestUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Error al eliminar el elemento: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error al llamar a la API: {ex.Message}");
+            }
+        }
+
+
     }
 }
